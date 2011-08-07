@@ -15,7 +15,7 @@
 			
 			import mx.events.FlexEvent;
 		
-			private var mFBConnect:FacebookManager;
+			private var mFBConnect1:FacebookManager;
 			
 			
 			protected function contentCreationComplete():void
