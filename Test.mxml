@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:ns1="*"
+			   width="600" height="600" addedToStage="contentCreationComplete()">
+	<fx:Script>
+		<![CDATA[
+			import SocialConnect.data.FriendData;
+			import SocialConnect.data.UserData;
+			import SocialConnect.events.FacebookEvent;
+			import SocialConnect.facebook.FacebookManager;
+			
+			import flash.net.navigateToURL;
+			
+			import mx.events.FlexEvent;
+		
+			private var mFBConnect:FacebookManager;
+			
+			
+			protected function contentCreationComplete():void
+			{
+				mFBConnect = new FacebookManager(this.stage);
+				mFBConnect.addEventListener(Event.CONNECT,onFaceBookConnect)
+			}
+			//___________________________________________________________
+			protected function onFaceBookConnect(e:Event):void
+			{
+				mURL.text= "FaceBook Connect OK";
+			}
+			//___________________________________________________________
+			
+			private function receiveFriends(event:FacebookEvent):void
+			{
+				mFriendList.dataProvider = mFBConnect.friends;
+			}
+			//___________________________________________________________
+			
+			private function receiveUserData(event:FacebookEvent):void
+			{
+				mURL.text = "User Data:\n";
+				mURL.appendText("ID:" + mFBConnect.userData.uid + "\n");
+				mURL.appendText("Display name :" + mFBConnect.userData.name + "\n");
+				mURL.appendText("first name :" + mFBConnect.userData.firstname + "\n");
+				mURL.appendText("Last Name: " + mFBConnect.userData.lastName + "\n");
+				mURL.appendText("Gender: " + mFBConnect.userData.gender + "\n");
+				mURL.appendText("picURL: " + mFBConnect.userData.picURL + "\n");
+				userPic.source = mFBConnect.userData.picURL;
+			}
+			//___________________________________________________________
+						
+			protected function mClear_clickHandler(event:MouseEvent):void
+			{
+				mURL.text = "";
+			}
+			//___________________________________________________________
+			
+			protected function mFrinds_clickHandler(event:MouseEvent):void
+			{
+				mFBConnect.getFriends();
+				mFBConnect.addEventListener(FacebookEvent.FRIENDS, receiveFriends);
+				
+			}
+			//___________________________________________________________
+			
+			protected function mInfo_clickHandler(event:MouseEvent):void
+			{
+				mFBConnect.getUserDetails();
+				mFBConnect.addEventListener(FacebookEvent.USER_DATA, receiveUserData);
+				
+			}
+			
+			protected function mConnect_clickHandler(event:MouseEvent):void
+			{
+				var url:URLRequest = new URLRequest("http://allseated.tsamir.net");
+				navigateToURL(url,"_facebookConnect");
+				
+			}
+			protected function mPost_clickHandler(event:MouseEvent):void
+			{
+				mFBConnect.post("Cap1","Desc1","mess1","http://allseated.tsamir.net");
+				
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:TextArea id="mURL" x="10" y="34" width="493" height="66" text="???"/>
+	<s:Button id="mClear" x="530" y="5" height="20" label="Clear" click="mClear_clickHandler(event)"/>
+	<s:Button id="mConnect" x="11" y="5" width="153" height="20" label="facebook connect" click="mConnect_clickHandler(event)"/>
+	<s:Button id="mFrinds" x="358" y="5" label="Frinds" click="mFrinds_clickHandler(event)"/>
+	<s:Button id="mInfo" x="430" y="5" label="Info" click="mInfo_clickHandler(event)"/>
+	<s:Button id="mTest" x="230" y="5" label="Post" click="mPost_clickHandler(event)"/>
+	<ns1:mxFriendsTable x="10" y="108" width="580" height="482" id="mFriendList"/>
+	<s:Image x="511" y="34" width="70" height="66" id="userPic"/>
+</s:Application>
